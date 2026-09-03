@@ -1,4 +1,4 @@
-package com.example.interview_prep.OnePay;
+package com.example.interview_prep.Prep;
 
 import java.util.*;
 
@@ -38,36 +38,35 @@ public class StateMachine {
 //
 //        System.out.println(averageDuration(logs));
 
-//        List<String> users = List.of("Alice",
-//                "Bob",
-//                "Alice",
-//                "John",
-//                "Bob",
-//                "Alice",
-//                "David",
-//                "John",
-//                "Alice");
-//        System.out.println(topKFrequentUsers(users,2));
+        List<String> users = List.of("Alice",
+                "Bob",
+                "Alice",
+                "John",
+                "Bob",
+                "Alice",
+                "David",
+                "John",
+                "Alice");
+        System.out.println(topKFrequentUsers(users,2));
 
-        String s = "44776.619 KTB918 310E MAINROAD";
-        tollBooth(s);
-
+//        String s = "44776.619 KTB918 310E MAINROAD";
+//        tollBooth(s);
 
 
     }
 
     public static int totalCompleteJourney(List<Log> logs) {
-        logs.sort((a,b)->Integer.compare(a.timestamp,b.timestamp));
+        logs.sort((a, b) -> Integer.compare(a.timestamp, b.timestamp));
 
         Set<String> entryVehicleDetails = new HashSet<>();
         int totalCompletedJourney = 0;
-        for(Log currentRow: logs) {
+        for (Log currentRow : logs) {
             String vehicleNumber = currentRow.vehicleNumber;
             String state = currentRow.state;
-            if("ENTRY".equals(state)) {
+            if ("ENTRY".equals(state)) {
                 entryVehicleDetails.add(vehicleNumber);
-            } else if("EXIT".equals(state)) {
-                if(entryVehicleDetails.contains(vehicleNumber)) {
+            } else if ("EXIT".equals(state)) {
+                if (entryVehicleDetails.contains(vehicleNumber)) {
                     totalCompletedJourney++;
                     entryVehicleDetails.remove(vehicleNumber);
                 }
@@ -75,16 +74,15 @@ public class StateMachine {
         }
 
 
-
         return totalCompletedJourney;
     }
 
-    static class LoginDetail{
+    static class LoginDetail {
         int timeStamp;
         String person;
         String status;
 
-        LoginDetail(int timeStamp,String person,String status) {
+        LoginDetail(int timeStamp, String person, String status) {
             this.timeStamp = timeStamp;
             this.person = person;
             this.status = status;
@@ -93,34 +91,34 @@ public class StateMachine {
     }
 
     public static double averageDuration(List<LoginDetail> loginDetailList) {
-        loginDetailList.sort(Comparator.comparingInt(loginDetail->loginDetail.timeStamp));
-        Map<String,Integer> keyIsPersonAndValueIsTimeStamp = new HashMap<>();
+        loginDetailList.sort(Comparator.comparingInt(loginDetail -> loginDetail.timeStamp));
+        Map<String, Integer> keyIsPersonAndValueIsTimeStamp = new HashMap<>();
         int totalTime = 0;
         int differentDurations = 0;
 
-        for(LoginDetail currentLoginDetail :loginDetailList) {
+        for (LoginDetail currentLoginDetail : loginDetailList) {
             String person = currentLoginDetail.person;
             String status = currentLoginDetail.status;
             Integer timeStamp = currentLoginDetail.timeStamp;
 
-            if("LOGIN".equals(status)) {
-                if(keyIsPersonAndValueIsTimeStamp.containsKey(person)) {
+            if ("LOGIN".equals(status)) {
+                if (keyIsPersonAndValueIsTimeStamp.containsKey(person)) {
                     continue;
                 }
-                keyIsPersonAndValueIsTimeStamp.put(person,timeStamp);
+                keyIsPersonAndValueIsTimeStamp.put(person, timeStamp);
             } else {
-               if(!keyIsPersonAndValueIsTimeStamp.containsKey(person)) {
-                   continue;
-               }
-               Integer loginTime = keyIsPersonAndValueIsTimeStamp.get(person);
-               int timeDuration = timeStamp-loginTime;
-               totalTime+=timeDuration;
-               differentDurations++;
-               keyIsPersonAndValueIsTimeStamp.remove(person);
+                if (!keyIsPersonAndValueIsTimeStamp.containsKey(person)) {
+                    continue;
+                }
+                Integer loginTime = keyIsPersonAndValueIsTimeStamp.get(person);
+                int timeDuration = timeStamp - loginTime;
+                totalTime += timeDuration;
+                differentDurations++;
+                keyIsPersonAndValueIsTimeStamp.remove(person);
             }
         }
 
-        return (double) totalTime /differentDurations;
+        return (double) totalTime / differentDurations;
     }
 
     static class UserFreq {
@@ -135,23 +133,18 @@ public class StateMachine {
 
     public static List<String> topKFrequentUsers(List<String> users, int k) {
         List<String> ans = new ArrayList<>();
-        Map<String,Integer> keyIsUserAndValueIsFreq = new HashMap<>();
-        for(String currentUser : users) {
-            keyIsUserAndValueIsFreq.put(currentUser,keyIsUserAndValueIsFreq.getOrDefault(currentUser,0)+1);
+        Map<String, Integer> keyIsUserAndValueIsFreq = new HashMap<>();
+        for (String currentUser : users) {
+            keyIsUserAndValueIsFreq.put(currentUser, keyIsUserAndValueIsFreq.getOrDefault(currentUser, 0) + 1);
         }
         System.out.println(keyIsUserAndValueIsFreq);
-        PriorityQueue<UserFreq> pq = new PriorityQueue<>((a,b)->Integer.compare(a.freq,b.freq));
-        for(Map.Entry<String,Integer> map: keyIsUserAndValueIsFreq.entrySet()) {
+        PriorityQueue<UserFreq> pq = new PriorityQueue<>((a, b) -> Integer.compare(a.freq, b.freq));
+        for (Map.Entry<String, Integer> map : keyIsUserAndValueIsFreq.entrySet()) {
             String user = map.getKey();
             Integer freq = map.getValue();
-            if(pq.size()==k) {
-                UserFreq peek = pq.peek();
-                if(freq>peek.freq) {
-                    pq.poll();
-                    pq.offer(new UserFreq(user, freq));
-                }
-            } else {
-                pq.offer(new UserFreq(user, freq));
+            pq.offer(new UserFreq(user,freq));
+            if(pq.size()>k) {
+                pq.poll();
             }
         }
 
@@ -170,9 +163,9 @@ public class StateMachine {
         String[] arr = input.split(" ");
         double timeStamp = Double.parseDouble(arr[0]);
         String licence = arr[1];
-        int location = Integer.parseInt(arr[2].substring(0,arr[2].length()-1));
-        char dir = arr[2].charAt(arr[2].length()-1);
-        String direction = dir=='E'?"EAST":"WEST";
+        int location = Integer.parseInt(arr[2].substring(0, arr[2].length() - 1));
+        char dir = arr[2].charAt(arr[2].length() - 1);
+        String direction = dir == 'E' ? "EAST" : "WEST";
         String booth = arr[3];
 
         System.out.println(timeStamp);
@@ -182,5 +175,6 @@ public class StateMachine {
         System.out.println(booth);
 
     }
+
 
 }
